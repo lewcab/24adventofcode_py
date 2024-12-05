@@ -1,3 +1,5 @@
+import re
+
 MATCH = "XMAS"
 MATCH_LEN = len(MATCH)
 
@@ -13,6 +15,7 @@ def main():
     print(f"Dimensions: {m} * {n}")
 
     print(f"Part 1: {part1(data, m, n)}")
+    print(f"Part 2: {part2(data, m, n)}")
 
 
 def part1(data: list, m: int, n: int) -> int:
@@ -25,6 +28,17 @@ def part1(data: list, m: int, n: int) -> int:
     return total
 
 
+def part2(data: list, m: int, n: int) -> int:
+    # Idea: Check every 3x3 sub-matrix for the correct format
+    total = 0
+    for row in range(m - 2):
+        for col in range(n - 2):
+            sub_data = [data[row + i][col:col + 3] for i in range(3)]
+            if check_x_mas(sub_data):
+                total += 1
+    return total
+
+
 def match(data: list, row: int, col: int, m: int, n: int) -> int:
     # Brute force check for a match in all 8 directions
     matches = 0
@@ -34,6 +48,16 @@ def match(data: list, row: int, col: int, m: int, n: int) -> int:
             matches += 1
 
     return matches
+
+
+def check_x_mas(sub_data: list) -> bool:
+    # Unravel the sub-matrix into a single string and check with regex
+    unzipped = "".join(sub_data)
+
+    if re.match(r'(M.S.A.M.S)|(M.M.A.S.S)|(S.M.A.S.M)|(S.S.A.M.M)', unzipped):
+        return True
+    else:
+        return False
 
 
 def create_string(data: list, row: int, col: int, m: int, n: int, dir: int) -> str:
